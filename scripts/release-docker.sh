@@ -59,7 +59,8 @@ esac
 if [[ "${SYSTEM_HOSTTYPE}" == "build" ]]; then
     echo 'running on CI'
 fi
-echo 'Augur Node Version: ${AUGUR_NODE_VERSION}'
+echo 'Augur Node Version: ' "${AUGUR_NODE_VERSION}"
+which node
 export npm_config_nodedir=/opt/hostedtoolcache/node/10.15.3/x64
 export npm_config_silly
 npm install -g node-gyp

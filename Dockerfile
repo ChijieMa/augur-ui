@@ -21,6 +21,8 @@ RUN apk --no-cache add \
 COPY package.json /augur/package.json
 WORKDIR /augur
 RUN git init \
+  && export npm_config_nodedir=/usr/local/include/node \
+  && export npm_config_silly \
   && yarn add require-from-string \
   && yarn \
   && rm -rf .git \
