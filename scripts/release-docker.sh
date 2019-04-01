@@ -56,16 +56,14 @@ case ${augur_env} in
         ;;
 esac
 
-#curl -v -LO https://nodejs.org/download/release/v10.15.0/node-v10.15.0-headers.tar.gz
-find /opt/hostedtoolcache/node
-#export npm_config_nodedir=/opt/hostedtoolcache/node/10.15.3/x64
-export npm_config_nodedir=/Users/jph/.node-gyp/10.15.1
 export npm_config_silly
+#npm install -g node-gyp
 
 docker build . --build-arg ethereum_network=${network} --build-arg build_environment=${build_environment} --tag augurproject/augur:${augur_env} --tag augurproject/augur:$version || exit 1
 
-docker push augurproject/augur:$version
-docker push augurproject/augur:${augur_env}
+#docker push augurproject/augur:$version
+#docker push augurproject/augur:${augur_env}
+exit 0
 
 # install packages needed to deploy to aws, then deploy
 if [[ -n "$cluster" ]]; then
