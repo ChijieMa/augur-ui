@@ -21,10 +21,11 @@ RUN apk --no-cache add \
 # begin create caching layer
 COPY package.json /augur/package.json
 ADD https://nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-headers.tar.gz /augur/node-v${NODE_VERSION}-headers.tar.gz
+RUN mkdir /augur/node-v${NODE_VERSION}/ && cd /augur/node-v${NODE_VERSION}/ && tar xvzf /augur/node-v${NODE_VERSION}-headers.tar.gz && ls -la *
 WORKDIR /augur
 RUN git init \
   && export npm_config_silly \
-  && export npm_config_tarball=/augur/node-v${NODE_VERSION}-headers.tar.gz \
+  && export npm_config_nodedir=/augur/node-v${NODE_VERSION} \
   && yarn add require-from-string \
   && yarn \
   && rm -rf .git \
