@@ -27,6 +27,7 @@ RUN git init \
   && npm config set tarball /augur/node-v${NODE_VERSION}-headers.tar.gz \
   && npm config set loglevel silly \
   && yarn add require-from-string \
+  && yarn install --global node-gyp \
   && yarn \
   && rm -rf .git \
   && rm package.json \
