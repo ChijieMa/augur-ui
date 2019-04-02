@@ -54,7 +54,10 @@ RUN git rev-parse HEAD > /augur/build/git-hash.txt \
   && chmod 755 /augur/local-run.sh \
   && cd /augur
 
-RUN rm -rf node_modules && yarn install --production
+RUN rm -rf node_modules && \
+    npm config set loglevel silly && \
+    npm config set tarball /augur/node-v${NODE_VERSION}-headers.tar.gz && \
+    yarn install --production
 
 FROM node:10.15.0-alpine
 
