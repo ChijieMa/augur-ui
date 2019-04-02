@@ -1,4 +1,5 @@
-FROM node:10.15.0-alpine as builder
+ARG NODE_VERSION=10.15.0
+FROM node:${NODE_VERSION}-alpine as builder
 
 ENV PATH /root/.yarn/bin:$PATH
 ARG ethereum_network=rinkeby
@@ -19,12 +20,12 @@ RUN apk --no-cache add \
 
 # begin create caching layer
 COPY package.json /augur/package.json
-COPY binding.gyp /augur/binding.gyp
+ADD https://nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-headers.tar.gz /augur/node-v${NODE_VERSION}-headers.tar.gz
 WORKDIR /augur
 RUN git init \
   && export npm_config_silly \
-  && yarn --verbose add require-from-string node-gyp\
-  && node-gyp rebuild \
+  && export npm_config_tarball=/augur/node-v${NODE_VERSION}-headers.tar.gz \
+  && yarn --verbose add require-from-string \
   && yarn --verbose \
   && rm -rf .git \
   && rm package.json \
