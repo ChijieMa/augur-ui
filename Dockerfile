@@ -25,8 +25,8 @@ WORKDIR /augur
 RUN git init \
   && export npm_config_silly \
   && export npm_config_tarball=/augur/node-v${NODE_VERSION}-headers.tar.gz \
-  && yarn --verbose add require-from-string \
-  && yarn --verbose \
+  && yarn add require-from-string \
+  && yarn \
   && rm -rf .git \
   && rm package.json \
   && rm yarn.lock
