@@ -56,15 +56,6 @@ case ${augur_env} in
         ;;
 esac
 
-if [[ "${SYSTEM_HOSTTYPE}" == "build" ]]; then
-    echo 'running on CI'
-fi
-echo 'Augur Node Version: ' "${AUGUR_NODE_VERSION}"
-which node
-export npm_config_nodedir=/opt/hostedtoolcache/node/10.15.3/x64
-export npm_config_silly
-npm install -g node-gyp
-
 docker build . --build-arg ethereum_network=${network} --build-arg build_environment=${build_environment} --tag augurproject/augur:${augur_env} --tag augurproject/augur:$version || exit 1
 
 #docker push augurproject/augur:$version

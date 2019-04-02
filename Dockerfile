@@ -19,12 +19,13 @@ RUN apk --no-cache add \
 
 # begin create caching layer
 COPY package.json /augur/package.json
+COPY binding.gyp /augur/binding.gyp
 WORKDIR /augur
 RUN git init \
-  && export npm_config_nodedir=/usr/local/include/ \
   && export npm_config_silly \
-  && yarn add require-from-string \
-  && yarn \
+  && yarn --verbose add require-from-string node-gyp\
+  && node-gyp rebuild \
+  && yarn --verbose \
   && rm -rf .git \
   && rm package.json \
   && rm yarn.lock
