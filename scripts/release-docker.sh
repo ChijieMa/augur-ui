@@ -56,10 +56,11 @@ case ${augur_env} in
         ;;
 esac
 
-docker build . --build-arg ethereum_network=${network} --build-arg build_environment=${build_environment} --tag augurproject/augur:${augur_env} --tag augurproject/augur:$version
+docker build . --build-arg ethereum_network=${network} --build-arg build_environment=${build_environment} --cache-from augurproject/augur:${augur_env} --tag augurproject/augur:${augur_env} --tag augurproject/augur:$version
 
 #docker push augurproject/augur:$version
 #docker push augurproject/augur:${augur_env}
+aws_preconfigure
 aws --region=us-east-1 ecs list-clusters
 exit 0
 
