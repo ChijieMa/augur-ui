@@ -1,6 +1,4 @@
 variables:
-  AWS_ACCESS_KEY_ID: $(AWS_KEY_ID)
-  AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_KEY)
   NODE_JS_VERSION: 10.15.0
 
 trigger:
@@ -16,12 +14,14 @@ jobs:
       - task: NodeTool@0
         inputs:
           versionSpec: $(NODE_JS_VERSION)
-      - script: yarn
-      - script: yarn lint && yarn test
+      - bash: |
+          yarn
+          yarn lint
+          yarn test
           # This is here to confirm the build works.
           # Nothing is done with the resulting artifacts.
-      - script: yarn build --dev
-        displayName: 'lint and test'
+          yarn build --dev
+        displayName: 'lint, test, and build'
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: 'JUnit'
@@ -56,8 +56,10 @@ jobs:
           dockerRegistryEndpoint: dockerhub-augurproject
       - bash: |
           set -euxo pipefail
-          env
           npm --verbose $(COMMAND)
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_KEY_ID)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_KEY)
       - task: Docker@1
         displayName: docker logout
         inputs:
@@ -89,7 +91,6 @@ jobs:
 #          dockerRegistryEndpoint: dockerhub-augurproject
 #      - bash: |
 #          set -euxo pipefail
-#          env
 #          npm --verbose $(COMMAND)
 #      - task: Docker@1
 #        displayName: docker logout
