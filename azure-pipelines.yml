@@ -1,7 +1,7 @@
 variables:
   AWS_ACCESS_KEY_ID: $(AWS_KEY_ID)
   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_KEY)
-  AUGUR_NODE_VERSION: 10.15.0
+  NODE_JS_VERSION: 10.15.0
 
 trigger:
 - master
@@ -15,7 +15,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: 10.15.0
+          versionSpec: $(NODE_JS_VERSION)
       - script: yarn
       - script: yarn lint && yarn test
           # This is here to confirm the build works.
@@ -47,7 +47,7 @@ jobs:
           versionSpec: '3.6.5'
       - task: NodeTool@0
         inputs:
-          versionSpec: 10.15
+          versionSpec: $(NODE_JS_VERSION)
       - task: Docker@1
         displayName: docker login
         inputs:
@@ -80,17 +80,17 @@ jobs:
 #          versionSpec: '3.6.5'
 #      - task: NodeTool@0
 #        inputs:
-#          versionSpec: 10.15
+#          versionSpec: $(NODE_JS_VERSION)
 #      - task: Docker@1
 #        displayName: docker login
 #        inputs:
 #          command: login
 #          containerRegistryType: Container Registry
 #          dockerRegistryEndpoint: dockerhub-augurproject
-#      - task: Npm@1
-#        inputs:
-#          command: custom
-#          customCommand: run docker:release -- sneakpeak
+#      - bash: |
+#          set -euxo pipefail
+#          env
+#          npm --verbose $(COMMAND)
 #      - task: Docker@1
 #        displayName: docker logout
 #        inputs:
