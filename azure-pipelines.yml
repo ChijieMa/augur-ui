@@ -31,16 +31,14 @@ jobs:
     dependsOn:
       - test_ui
     strategy:
-      maxParallel: 10
+      maxParallel: 3
       matrix:
         dev:
-          COMMAND: run docker:release -- dev
-        sneakpeak:
-          COMMAND: run docker:release -- sneakpeak
+          RELEASE_ENV: dev
         kovan:
-          COMMAND: run docker:release -- kovan
+          RELEASE_ENV: kovan
         dev-optimized:
-          COMMAND: run docker:release -- dev-optimized
+          RELEASE_ENV: dev-optimized
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -56,7 +54,8 @@ jobs:
           dockerRegistryEndpoint: dockerhub-augurproject
       - bash: |
           set -euxo pipefail
-          npm --verbose $(COMMAND)
+          npm run docker:release -- $(RELEASE_ENV)
+        displayName: docker release $(RELEASE_ENV)
         env:
           AWS_ACCESS_KEY_ID: $(AWS_KEY_ID)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_KEY)
@@ -66,42 +65,46 @@ jobs:
           command: logout
           containerRegistryType: Container Registry
           dockerRegistryEndpoint: dockerhub-augurproject
-#    condition: |
-#      and
-#      (
-#          succeeded(),
-#          eq(variables['Build.SourceBranch'], 'refs/heads/master')
-#      )
+    condition: |
+      and
+      (
+          succeeded(),
+          eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
 
-#  - job: deploy_ui_on_sneakpreview
-#    dependsOn:
-#      - test_ui
-#    steps:
-#      - task: UsePythonVersion@0
-#        inputs:
-#          versionSpec: '3.6.5'
-#      - task: NodeTool@0
-#        inputs:
-#          versionSpec: $(NODE_JS_VERSION)
-#      - task: Docker@1
-#        displayName: docker login
-#        inputs:
-#          command: login
-#          containerRegistryType: Container Registry
-#          dockerRegistryEndpoint: dockerhub-augurproject
-#      - bash: |
-#          set -euxo pipefail
-#          npm --verbose $(COMMAND)
-#      - task: Docker@1
-#        displayName: docker logout
-#        inputs:
-#          command: logout
-#          containerRegistryType: Container Registry
-#          dockerRegistryEndpoint: dockerhub-augurproject
-#    condition: |
-#      and
-#      (
-#          succeeded(),
-#          eq(variables['Build.SourceBranch'], 'refs/heads/sneakpeak')
-#      )
-#
+  - job: deploy_ui_on_sneakpreview
+    dependsOn:
+      - test_ui
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.6.5'
+      - task: NodeTool@0
+        inputs:
+          versionSpec: $(NODE_JS_VERSION)
+      - task: Docker@1
+        displayName: docker login
+        inputs:
+          command: login
+          containerRegistryType: Container Registry
+          dockerRegistryEndpoint: dockerhub-augurproject
+      - bash: |
+          set -euxo pipefail
+          npm run docker:release -- sneakpeak
+        displayName: docker release sneakpeak
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_KEY_ID)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_KEY)
+      - task: Docker@1
+        displayName: docker logout
+        inputs:
+          command: logout
+          containerRegistryType: Container Registry
+          dockerRegistryEndpoint: dockerhub-augurproject
+    condition: |
+      and
+      (
+          succeeded(),
+          eq(variables['Build.SourceBranch'], 'refs/heads/sneakpeak')
+      )
+
