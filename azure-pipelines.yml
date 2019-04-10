@@ -78,7 +78,7 @@ jobs:
     steps:
       - task: UsePythonVersion@0
         inputs:
-          versionSpec: '3.6.5'
+          versionSpec: '3.7.2'
       - task: NodeTool@0
         inputs:
           versionSpec: $(NODE_JS_VERSION)
