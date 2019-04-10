@@ -5,15 +5,29 @@ import OpenMarkets from "modules/account/components/open-markets/open-markets";
 import { pick } from "lodash";
 import getLoginAccountPositions from "modules/positions/selectors/login-account-positions";
 import memoize from "memoizee";
-
-import { MARKET_OPEN } from "modules/common-elements/constants";
-
+import { ZERO, MARKET_OPEN } from "modules/common-elements/constants";
+import { createBigNumber } from "utils/create-big-number";
 import { createMarketsStateObject } from "modules/portfolio/helpers/create-markets-state-object";
 
 const mapStateToProps = state => {
   const positions = getLoginAccountPositions();
 
   const markets = getPositionsMarkets(positions);
+
+  let totalPercentage = "0.00";
+
+  if (markets.length > 0) {
+    totalPercentage = markets
+      .reduce(
+        (tot, m) =>
+          createBigNumber(m.myPositionsSummary.valueChange.fullPrecision).plus(
+            tot
+          ),
+        ZERO
+      )
+      .dividedBy(markets.length)
+      .toFixed(2);
+  }
 
   const marketsObj = markets.reduce((obj, market) => {
     obj[market.id] = market;
@@ -30,7 +44,8 @@ const mapStateToProps = state => {
     isLogged: state.authStatus.isLogged,
     isMobile: state.appStatus.isMobile,
     markets: marketsByState[MARKET_OPEN],
-    marketsObj
+    marketsObj,
+    totalPercentage
   };
 };
 
